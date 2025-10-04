@@ -1,13 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-
+import { Navigate } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
-
 import axios from "axios";
 import AnimatedRoutes from "./components/AnimatedRoutes";
 
@@ -36,13 +29,11 @@ export default function App() {
   };
 
   return (
-    <Router>
-      <AnimatedRoutes
-        user={user}
-        posts={posts}
-        users={users}
-        comments={comments}
-      />
-    </Router>
+    <AnimatedRoutes
+      user={user}
+      posts={posts}
+      users={users}
+      comments={comments}
+    />
   );
 }

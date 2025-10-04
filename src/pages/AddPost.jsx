@@ -67,13 +67,15 @@ export default function AddPost() {
         "https://blog-back-production-f88f.up.railway.app/posts",
         {
           ...formData,
-          image: imageUrl, // 👈 دلوقتي بيتخزن الرابط
+          image: imageUrl,
           authorId: user.id,
           createdAt: new Date().toISOString(),
         }
       );
       toast.success("Post added successfully");
+
       navigate("/");
+      window.location.reload();
     } catch (err) {
       console.error(err);
       toast.error("Error adding post");

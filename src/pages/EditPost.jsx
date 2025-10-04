@@ -67,6 +67,7 @@ export default function EditPost({ currentUser }) {
 
       toast.success("Post updated successfully");
       navigate("/");
+      window.location.reload();
     } catch (err) {
       console.error("❌ Error updating post:", err);
       toast.error("Error updating post");
