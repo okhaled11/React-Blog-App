@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import toast, { Toaster } from "react-hot-toast";
 import { Toast } from "@chakra-ui/react";
@@ -12,6 +12,7 @@ export default function EditPost({ currentUser }) {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [image, setImage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     axios
@@ -48,6 +49,7 @@ export default function EditPost({ currentUser }) {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     if (!currentUser) {
       toast.error("You must be logged in to edit a post");
@@ -72,6 +74,7 @@ export default function EditPost({ currentUser }) {
       console.error("❌ Error updating post:", err);
       toast.error("Error updating post");
     }
+    setLoading(false);
   };
 
   return (
@@ -119,10 +122,26 @@ export default function EditPost({ currentUser }) {
             className="w-full rounded-lg mb-2 shadow"
           />
         )}
+        <div className="flex flex gap-3 pt-4">
+          <button
+            type="submit"
+            className="btn btn-primary w-1/2 text-lg"
+            disabled={loading}
+          >
+            {loading ? (
+              <span className="loading loading-infinity loading-lg"></span>
+            ) : (
+              "Edit Post"
+            )}
+          </button>
 
-        <button type="submit" className="btn btn-primary w-full">
-          Save Changes
-        </button>
+          <Link
+            to="/"
+            className="btn btn-secondary w-1/2 text-lg hover:bg-secondary/80"
+          >
+            Cancel
+          </Link>
+        </div>
       </form>
     </div>
   );

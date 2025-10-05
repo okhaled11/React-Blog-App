@@ -11,7 +11,7 @@ export default function PasswordFields({ formData, setFormData }) {
 
     if (e.target.name === "confirmPassword") {
       if (e.target.value !== formData.password) {
-        setError("Passwords do not match ❌");
+        setError("Passwords do not match ");
       } else {
         setError("");
       }

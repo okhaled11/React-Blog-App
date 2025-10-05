@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-import { Eye, EyeOff, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import PasswordFields from "../components/PasswordFields";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+import reg from "../assets/reg.svg";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -37,22 +38,40 @@ export default function Register() {
     return publicUrlData?.publicUrl || null;
   };
 
+  const checkIfUserExists = async (email) => {
+    try {
+      const res = await axios.get(
+        `https://blog-back-production-f88f.up.railway.app/users?email=${email}`
+      );
+      return res.data.length > 0;
+    } catch (err) {
+      console.error("Error checking user existence:", err);
+      return false;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    let avatarUrl = "";
-
-    if (file) {
-      avatarUrl = await uploadToSupabase(file);
-      if (!avatarUrl) {
-        toast.error("Error uploading avatar");
+    try {
+      const exists = await checkIfUserExists(formData.email);
+      if (exists) {
+        toast.error("This email is already registered");
         setLoading(false);
         return;
       }
-    }
 
-    try {
+      let avatarUrl = "";
+      if (file) {
+        avatarUrl = await uploadToSupabase(file);
+        if (!avatarUrl) {
+          toast.error("Error uploading avatar");
+          setLoading(false);
+          return;
+        }
+      }
+
       await axios.post(
         "https://blog-back-production-f88f.up.railway.app/users",
         {
@@ -61,7 +80,7 @@ export default function Register() {
         }
       );
 
-      toast.success("Registered successfully");
+      toast.success("Registered successfully ");
       navigate("/login");
     } catch (err) {
       console.error(err);
@@ -73,12 +92,18 @@ export default function Register() {
 
   return (
     <div className="flex min-h-screen bg-base-200">
+      <div>
+        <Toaster />
+      </div>
       <div className="hidden md:flex w-1/2 bg-gradient-to-br from-indigo-500 to-violet-600 items-center justify-center">
-        <img
-          src="https://images.unsplash.com/photo-1508780709619-79562169bc64?w=800"
-          alt="Register Illustration"
-          className="w-3/4 animate-fade-in"
-        />
+        <div className="text-center text-white px-6">
+          <h1 className="text-4xl font-bold mb-4">Join Blogy Today!</h1>
+          <p className="text-lg">
+            Share your thoughts, connect with others, and explore a world of
+            ideas.
+          </p>
+          <img src={reg} alt="Image" className="mt-6 rounded-lg " />
+        </div>
       </div>
 
       <div className="flex w-full md:w-1/2 justify-center items-center p-6">
@@ -93,7 +118,7 @@ export default function Register() {
               <img
                 src={URL.createObjectURL(file)}
                 alt="Preview"
-                className="w-24 h-24 rounded-full object-cover mb-4"
+                className="w-24 h-24 rounded-full object-cover mb-4 shadow-md"
               />
             </div>
           )}
@@ -141,7 +166,7 @@ export default function Register() {
             )}
           </button>
 
-          <p className="text-center">
+          <p className="text-center text-sm">
             Already have an account?{" "}
             <Link to="/login" className="underline text-indigo-600">
               Login

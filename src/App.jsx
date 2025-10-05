@@ -29,11 +29,13 @@ export default function App() {
   };
 
   return (
-    <AnimatedRoutes
-      user={user}
-      posts={posts}
-      users={users}
-      comments={comments}
-    />
+    <>
+      <AnimatedRoutes
+        user={user}
+        posts={posts}
+        users={users}
+        comments={comments}
+      />
+    </>
   );
 }

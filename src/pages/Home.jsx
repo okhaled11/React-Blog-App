@@ -45,7 +45,7 @@ export default function Home({ posts = [], users = [], comments = [] }) {
         })
       )}
       <Link
-        className=" btn btn-primary  fixed bottom-4 right-4  btn-circle w-16 h-16  hover:bg-violet-400 flex justify-center items-center text-center text-3xl font-bold"
+        className=" btn btn-primary  z-10 fixed bottom-12 right-4  btn-circle w-16 h-16  hover:bg-violet-400 flex justify-center items-center text-center text-3xl font-bold"
         to={user ? "/add-post" : "/login"}
       >
         +

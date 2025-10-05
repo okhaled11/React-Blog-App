@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -52,7 +52,6 @@ export default function AddPost() {
 
     let imageUrl = "";
 
-    // لو في صورة اختارها المستخدم ارفعها الأول
     if (file) {
       imageUrl = await uploadToSupabase(file);
       if (!imageUrl) {
@@ -85,21 +84,24 @@ export default function AddPost() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-base-200">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-base-200 via-base-300 to-base-200 p-6">
       <div>
         <Toaster />
       </div>
+
       <form
         onSubmit={handleSubmit}
-        className="card w-96 bg-base-100 shadow-xl p-6 space-y-4"
+        className="card w-full max-w-lg bg-base-100 shadow-2xl rounded-2xl p-8 space-y-5 border border-base-300"
       >
-        <h2 className="text-2xl font-bold text-center">Add Post</h2>
+        <h2 className="text-3xl font-bold text-center text-primary mb-6">
+          Add Post
+        </h2>
 
         <input
           type="text"
           name="title"
           placeholder="Title"
-          className="input input-bordered w-full"
+          className="input input-bordered w-full text-lg"
           onChange={handleChange}
           required
         />
@@ -107,40 +109,54 @@ export default function AddPost() {
         <textarea
           name="body"
           placeholder="Body"
-          className="textarea textarea-bordered w-full"
+          className="textarea textarea-bordered w-full text-lg min-h-32"
           onChange={handleChange}
           required
         ></textarea>
 
-        <input
-          type="file"
-          accept="image/*"
-          className="file-input file-input-bordered w-full"
-          onChange={handleFileChange}
-        />
+        <div className="space-y-2">
+          <label className="font-semibold text-sm text-gray-600">
+            Upload image
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            className="file-input file-input-bordered w-full"
+            onChange={handleFileChange}
+          />
+        </div>
 
         {file && (
           <div className="mt-4">
-            <p className="text-sm mb-2">Preview:</p>
+            <p className="text-sm mb-2 font-medium text-gray-600">Preview:</p>
             <img
               src={URL.createObjectURL(file)}
               alt="Preview"
-              className="w-full rounded-lg"
+              className="w-full rounded-xl border border-base-300 shadow-sm"
             />
           </div>
         )}
 
-        <button
-          type="submit"
-          className="btn btn-primary w-full"
-          disabled={loading}
-        >
-          {loading ? (
-            <span className="loading loading-infinity loading-xl"></span>
-          ) : (
-            "Add Post"
-          )}
-        </button>
+        <div className="flex flex gap-3 pt-4">
+          <button
+            type="submit"
+            className="btn btn-primary w-1/2 text-lg"
+            disabled={loading}
+          >
+            {loading ? (
+              <span className="loading loading-infinity loading-lg"></span>
+            ) : (
+              "Add Post"
+            )}
+          </button>
+
+          <Link
+            to="/"
+            className="btn btn-secondary w-1/2 text-lg hover:bg-secondary/80"
+          >
+            Cancel
+          </Link>
+        </div>
       </form>
     </div>
   );
