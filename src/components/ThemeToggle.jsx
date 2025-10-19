@@ -3,30 +3,59 @@ import { useEffect, useState } from "react";
 export default function ThemeToggle() {
   const [theme, setTheme] = useState("light");
 
-  // 1. عند تحميل المكون لأول مرة: قراءة وحفظ الثيم
   useEffect(() => {
-    // قراءة الثيم المحفوظ أو استخدام 'light' كإعداد افتراضي
     const storedTheme = localStorage.getItem("theme") || "light";
     setTheme(storedTheme);
     document.querySelector("html").setAttribute("data-theme", storedTheme);
   }, []);
 
-  // 2. عند تغيير حالة 'theme': تطبيق الثيم وحفظه
   useEffect(() => {
     document.querySelector("html").setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme); // حفظ الثيم في الـ localStorage
+    localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // دالة التبديل
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+  const toggleTheme = (event) => {
+    const newTheme = theme === "light" ? "dark" : "light";
+
+    if (!document.startViewTransition) {
+      setTheme(newTheme);
+      return;
+    }
+
+    const x = event.clientX;
+    const y = event.clientY;
+
+    const endRadius = Math.hypot(
+      Math.max(x, innerWidth - x),
+      Math.max(y, innerHeight - y)
+    );
+
+    const transition = document.startViewTransition(() => {
+      setTheme(newTheme);
+    });
+
+    transition.ready.then(() => {
+      const clipPath = [
+        `circle(0px at ${x}px ${y}px)`,
+        `circle(${endRadius}px at ${x}px ${y}px)`,
+      ];
+
+      document.documentElement.animate(
+        {
+          clipPath: clipPath,
+        },
+        {
+          duration: 500,
+          easing: "ease-in-out",
+          pseudoElement: "::view-transition-new(root)",
+        }
+      );
+    });
   };
 
-  // الزر الدائري لتطبيق الثيم
   return (
     <button onClick={toggleTheme} className="btn btn-ghost btn-circle">
       {theme === "dark" ? (
-        // أيقونة الشمس (Sun) عندما يكون الثيم Dark (للتغيير إلى Light)
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
@@ -42,7 +71,6 @@ export default function ThemeToggle() {
           <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" />
         </svg>
       ) : (
-        // أيقونة القمر (Moon) عندما يكون الثيم Light (للتغيير إلى Dark)
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
